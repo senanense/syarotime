@@ -6,12 +6,13 @@
   <title>時刻表示ツール</title>
   <style>
     body {
-      font-family: "Palatino", serif;
+      font-family: "Times New Roman", serif;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      justify-content: center;
+      justify-content: flex-start;
       padding-left: 10%;
+      padding-top: 5%;
       height: 100vh;
       margin: 0;
     }
@@ -21,20 +22,26 @@
     }
     .time-display {
       font-size: 3em;
-      margin-bottom: 1em;
+      margin-bottom: 0.5em;
     }
     .offset-info {
       font-size: 2em;
-      margin-bottom: 2em;
+      margin-bottom: 1.5em;
     }
     .input-section {
       font-size: 1em;
-      margin-top: 2em;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
     .input-section input[type="number"] {
-      width: 80px;
+      width: 100px;
       padding: 5px;
       font-size: 1em;
+      margin-bottom: 0.5em;
+    }
+    .input-section button {
+      margin: 0.2em 0;
     }
   </style>
 </head>
@@ -43,15 +50,8 @@
   <div class="offset-info">Offset: <span id="offset">0</span> ms</div>
 
   <div class="input-section">
-    <label>
-      Forward: 
-      <input type="number" id="forward" placeholder="ms">
-    </label>
+    <input type="number" id="timeAdjust" placeholder="ms">
     <button onclick="adjustTime('forward')">Forward</button>
-    <label>
-      Backward: 
-      <input type="number" id="backward" placeholder="ms">
-    </label>
     <button onclick="adjustTime('backward')">Backward</button>
     <label>
       Flash:
@@ -79,12 +79,12 @@
       // Flash effect if milliseconds are .000 and flash is enabled
       if (milliseconds === '000' && flashToggle.checked) {
         document.body.classList.add('flash');
-        setTimeout(() => document.body.classList.remove('flash'), 100);
+        setTimeout(() => document.body.classList.remove('flash'), 50); // 確実にフラッシュするように短い時間設定
       }
     }
 
     function adjustTime(direction) {
-      const inputField = document.getElementById(direction);
+      const inputField = document.getElementById('timeAdjust');
       const value = parseInt(inputField.value, 10);
       
       if (!isNaN(value)) {
@@ -94,9 +94,8 @@
           offset -= value;
         }
         offsetDisplay.textContent = offset;
+        updateDisplay(); // 手動リフレッシュのタイミングで表示更新
       }
-      
-      inputField.value = ''; // Clear input after applying
     }
 
     // Update display every 10 ms to keep time flowing
