@@ -80,15 +80,16 @@
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
       const seconds = String(now.getSeconds()).padStart(2, '0');
-      const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
+      const milliseconds = now.getMilliseconds();
       
       // Update time display
-      timeDisplay.textContent = `${hours}:${minutes}:${seconds}.${milliseconds}`;
+      timeDisplay.textContent = `${hours}:${minutes}:${seconds}.${String(milliseconds).padStart(3, '0')}`;
       
-      // Flash effect across entire background if milliseconds are .000 and flash is enabled
-      if (milliseconds === '000' && flashToggle.checked) {
+      // Flash effect: blue background from .000 to .049 ms if flash is enabled
+      if (milliseconds < 50 && flashToggle.checked) {
         document.body.style.backgroundColor = "blue";
-        setTimeout(() => document.body.style.backgroundColor = "white", 100);
+      } else {
+        document.body.style.backgroundColor = "white";
       }
     }
 
@@ -107,7 +108,7 @@
       }
     }
 
-    // Update display every 1 ms to keep time flowing
+    // Update display every 1 ms to keep time flowing smoothly
     setInterval(updateDisplay, 1);
   </script>
 </body>
