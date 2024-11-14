@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +13,7 @@
       justify-content: flex-start;
       padding: 0 10%;
       margin: 0;
-      transition: background-color 0.1s;
+      transition: background-color 0.1s; /* フラッシュ用の背景色変更 */
     }
     .time-display {
       font-size: 3em;
@@ -31,7 +31,7 @@
       width: 100%;
     }
     .input-section input[type="number"] {
-      width: 30%;
+      width: 35%; /* 時刻表示の右端まで伸ばす */
       padding: 5px;
       font-size: 1em;
       margin-bottom: 0.5em;
@@ -41,7 +41,7 @@
       align-items: center;
     }
     .button-section button {
-      width: 100px;
+      width: 100px; /* ForwardとBackwardボタンを同じ横幅に設定 */
       padding: 5px;
       font-size: 1em;
       margin-right: 10px;
@@ -88,7 +88,7 @@
       // Flash effect across entire background if milliseconds are .000 and flash is enabled
       if (milliseconds === '000' && flashToggle.checked) {
         document.body.style.backgroundColor = "blue";
-        setTimeout(() => document.body.style.backgroundColor = "white", 100);
+        setTimeout(() => document.body.style.backgroundColor = "white", 100); // 短時間のフラッシュ
       }
     }
 
@@ -103,12 +103,12 @@
           offset -= value;
         }
         offsetDisplay.textContent = offset;
-        updateDisplay();
+        updateDisplay(); // 手動リフレッシュのタイミングで表示更新
       }
     }
 
     // Update display every 10 ms to keep time flowing
-    setInterval(updateDisplay, 3);
+    setInterval(updateDisplay, 10);
   </script>
 </body>
 </html>
