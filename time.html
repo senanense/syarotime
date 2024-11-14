@@ -84,7 +84,7 @@
       
       timeDisplay.textContent = `${hours}:${minutes}:${seconds}.${String(milliseconds).padStart(3, '0')}`;
       
-      if ((milliseconds > 960 || milliseconds < 40) && flashToggle.checked) {
+      if (milliseconds > 920 && flashToggle.checked) {
         document.body.style.backgroundColor = "blue";
       } else {
         document.body.style.backgroundColor = "white";
