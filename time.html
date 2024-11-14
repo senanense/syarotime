@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>時刻表示ツール</title>
+  <title>milliseconds</title>
   <style>
     body {
       font-family: "Times New Roman", serif;
@@ -13,14 +13,7 @@
       justify-content: flex-start;
       padding: 0 10%;
       margin: 0;
-    }
-    .flash-area {
-      width: 100%;
-      height: 10vh; /* フラッシュ範囲の高さ設定 */
-      transition: background-color 0.1s;
-    }
-    .flash {
-      background-color: blue;
+      transition: background-color 0.1s; 
     }
     .time-display {
       font-size: 3em;
@@ -38,7 +31,7 @@
       width: 100%;
     }
     .input-section input[type="number"] {
-      width: 100%; /* 時刻表示の右端まで伸ばす */
+      width: 50%; 
       padding: 5px;
       font-size: 1em;
       margin-bottom: 0.5em;
@@ -48,7 +41,7 @@
       align-items: center;
     }
     .button-section button {
-      width: 100px; /* ForwardとBackwardボタンを同じ横幅に設定 */
+      width: 100px; 
       padding: 5px;
       font-size: 1em;
       margin-right: 10px;
@@ -59,10 +52,9 @@
   </style>
 </head>
 <body>
-  <div class="flash-area" id="flashArea"></div>
   
   <div class="time-display" id="timeDisplay">00:00:00.000</div>
-  <div class="offset-info">Offset: <span id="offset">0</span> ms</div>
+  <div class="offset-info">offset : <span id="offset">0</span> ms</div>
 
   <div class="input-section">
     <input type="number" id="timeAdjust" placeholder="ms">
@@ -82,7 +74,6 @@
     const timeDisplay = document.getElementById('timeDisplay');
     const offsetDisplay = document.getElementById('offset');
     const flashToggle = document.getElementById('flashToggle');
-    const flashArea = document.getElementById('flashArea');
 
     function updateDisplay() {
       const now = new Date(startTime + offset + (Date.now() - startTime));
@@ -94,10 +85,10 @@
       // Update time display
       timeDisplay.textContent = `${hours}:${minutes}:${seconds}.${milliseconds}`;
       
-      // Flash effect in limited area if milliseconds are .000 and flash is enabled
+      // Flash effect across entire background if milliseconds are .000 and flash is enabled
       if (milliseconds === '000' && flashToggle.checked) {
-        flashArea.classList.add('flash');
-        setTimeout(() => flashArea.classList.remove('flash'), 100); // 短時間のフラッシュ
+        document.body.style.backgroundColor = "blue";
+        setTimeout(() => document.body.style.backgroundColor = "white", 100); 
       }
     }
 
@@ -112,7 +103,7 @@
           offset -= value;
         }
         offsetDisplay.textContent = offset;
-        updateDisplay(); // 手動リフレッシュのタイミングで表示更新
+        updateDisplay(); 
       }
     }
 
