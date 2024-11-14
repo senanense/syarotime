@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>時刻表示ツール</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .flash {
+      background-color: blue;
+      transition: background-color 0.1s;
+    }
+    .offset-info, .time-display {
+      margin: 10px;
+      font-size: 1.5em;
+    }
+    .input-section {
+      margin-top: 20px;
+    }
+    input[type="number"] {
+      width: 80px;
+      padding: 5px;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <div class="offset-info">Offset: <span id="offset">0</span> ms</div>
+  <div class="time-display" id="timeDisplay">00:00:00.000</div>
+
+  <div class="input-section">
+    <label>
+      Forward: 
+      <input type="number" id="forward" placeholder="ms">
+    </label>
+    <button onclick="adjustTime('forward')">Forward</button>
+    <label>
+      Backward: 
+      <input type="number" id="backward" placeholder="ms">
+    </label>
+    <button onclick="adjustTime('backward')">Backward</button>
+    <label>
+      Flash:
+      <input type="checkbox" id="flashToggle" checked>
+    </label>
+  </div>
+
+  <script>
+    let offset = 0;
+    const timeDisplay = document.getElementById('timeDisplay');
+    const offsetDisplay = document.getElementById('offset');
+    const flashToggle = document.getElementById('flashToggle');
+
+    // 初回の時刻表示
+    updateDisplay();
+
+    function updateDisplay() {
+      const now = new Date(Date.now() + offset);
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
+      
+      // Update time display
+      timeDisplay.textContent = `${hours}:${minutes}:${seconds}.${milliseconds}`;
+      
+      // Flash effect if milliseconds are .000 and flash is enabled
+      if (milliseconds === '000' && flashToggle.checked) {
+        document.body.classList.add('flash');
+        setTimeout(() => document.body.classList.remove('flash'), 100);
+      }
+    }
+
+    function adjustTime(direction) {
+      const inputField = document.getElementById(direction);
+      const value = parseInt(inputField.value, 10);
+      
+      if (!isNaN(value)) {
+        if (direction === 'forward') {
+          offset += value;
+        } else if (direction === 'backward') {
+          offset -= value;
+        }
+        offsetDisplay.textContent = offset;
+        updateDisplay(); // 手動リフレッシュのタイミングで表示更新
+      }
+      
+      inputField.value = ''; // Clear input after applying
+    }
+  </script>
+</body>
+</html>
