@@ -82,11 +82,9 @@
       const seconds = String(now.getSeconds()).padStart(2, '0');
       const milliseconds = now.getMilliseconds();
       
-      // Update time display
       timeDisplay.textContent = `${hours}:${minutes}:${seconds}.${String(milliseconds).padStart(3, '0')}`;
       
-      // Flash effect: blue background from .000 to .049 ms if flash is enabled
-      if (milliseconds < 50 && flashToggle.checked) {
+      if ((milliseconds > 950 || milliseconds < 50) && flashToggle.checked) {
         document.body.style.backgroundColor = "blue";
       } else {
         document.body.style.backgroundColor = "white";
