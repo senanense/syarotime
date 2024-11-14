@@ -52,7 +52,7 @@
   </style>
 </head>
 <body>
-  
+
   <div class="time-display" id="timeDisplay">00:00:00.000</div>
   <div class="offset-info">offset : <span id="offset">0</span> ms</div>
 
@@ -81,21 +81,21 @@
       const minutes = String(now.getMinutes()).padStart(2, '0');
       const seconds = String(now.getSeconds()).padStart(2, '0');
       const milliseconds = String(now.getMilliseconds()).padStart(3, '0');
-      
+
       // Update time display
-      timeDisplay.textContent = `${hours}:${minutes}:${seconds}.${milliseconds}`;
-      
+      timeDisplay.textContent = `<span class="math-inline">\{hours\}\:</span>{minutes}:<span class="math-inline">\{seconds\}\.</span>{milliseconds}`;
+
       // Flash effect across entire background if milliseconds are .000 and flash is enabled
       if (milliseconds === '000' && flashToggle.checked) {
         document.body.style.backgroundColor = "blue";
-        setTimeout(() => document.body.style.backgroundColor = "white", 100);
+        document.body.style.backgroundColor = "white";
       }
     }
 
     function adjustTime(direction) {
       const inputField = document.getElementById('timeAdjust');
       const value = parseInt(inputField.value, 10);
-      
+
       if (!isNaN(value)) {
         if (direction === 'forward') {
           offset += value;
@@ -108,7 +108,4 @@
     }
 
     // Update display every 10 ms to keep time flowing
-    setInterval(updateDisplay, 3);
-  </script>
-</body>
-</html>
+    setInterval(updateDisplay, 3
