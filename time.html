@@ -13,7 +13,7 @@
       justify-content: flex-start;
       padding: 0 10%;
       margin: 0;
-      transition: background-color 0.1s; /* フラッシュ用の背景色変更 */
+      transition: background-color 0.1s;
     }
     .time-display {
       font-size: 3em;
@@ -41,7 +41,7 @@
       align-items: center;
     }
     .button-section button {
-      width: 100px; /* ForwardとBackwardボタンを同じ横幅に設定 */
+      width: 100px;
       padding: 5px;
       font-size: 1em;
       margin-right: 10px;
@@ -88,7 +88,7 @@
       // Flash effect across entire background if milliseconds are .000 and flash is enabled
       if (milliseconds === '000' && flashToggle.checked) {
         document.body.style.backgroundColor = "blue";
-        setTimeout(() => document.body.style.backgroundColor = "white", 100); // 短時間のフラッシュ
+        setTimeout(() => document.body.style.backgroundColor = "white", 100);
       }
     }
 
@@ -103,7 +103,7 @@
           offset -= value;
         }
         offsetDisplay.textContent = offset;
-        updateDisplay(); // 手動リフレッシュのタイミングで表示更新
+        updateDisplay();
       }
     }
 
