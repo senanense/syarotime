@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>time</title>
+  <title>JST Clock msec</title>
   <style>
     body {
       font-family: "Times New Roman", serif;
@@ -16,47 +16,61 @@
       margin: 0;
       transition: background-color 0.1s;
     }
+
     .time-display {
       font-size: 3em;
       margin-top: 6%;
       margin-bottom: 0.5em;
     }
+
     .offset-info {
       font-size: 2em;
       margin-bottom: 1.5em;
     }
+
     .input-section {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       width: 100%;
     }
+
     .input-section input[type="number"] {
       width: 36%;
       padding: 5px;
       font-size: 1em;
       margin-bottom: 0.5em;
     }
+
     .button-section {
       display: flex;
       align-items: center;
     }
+
     .button-section button {
       width: 100px;
       padding: 5px;
       font-size: 1em;
       margin-right: 10px;
     }
+
     .button-section label {
       margin-left: 10px;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 1.2em;
+      margin-top: 1em;
     }
   </style>
 </head>
 
 <body>
-  
+
   <div class="time-display" id="timeDisplay">00:00:00.000</div>
   <div class="offset-info">offset : <span id="offset">0</span> ms</div>
+  <div id="errorMessage" class="error-message" style="display: none;"></div>
 
   <div class="input-section">
     <input type="number" id="timeAdjust" placeholder="ms">
@@ -72,20 +86,56 @@
 
   <script>
     let offset = 0;
-    let startTime = Date.now();
+    let serverTimeOffset = 0; // Server and local time difference in ms
+    let latencyCorrection = 0; // Latency correction value
+    let useLocalTime = false; // Flag to determine if local time should be used
     const timeDisplay = document.getElementById('timeDisplay');
     const offsetDisplay = document.getElementById('offset');
     const flashToggle = document.getElementById('flashToggle');
+    const errorMessage = document.getElementById('errorMessage');
+
+    // Function to synchronize with server time
+    async function synchronizeWithServer() {
+      try {
+        const start = Date.now();
+        const response = await fetch("https://worldtimeapi.org/api/timezone/Asia/Tokyo"); // Example API
+        const data = await response.json();
+        const end = Date.now();
+
+        // Calculate round-trip latency
+        const roundTripLatency = end - start;
+        latencyCorrection = roundTripLatency / 2; // Half of the round-trip latency
+
+        const serverTime = new Date(data.utc_datetime).getTime();
+        const localTime = Date.now();
+        serverTimeOffset = serverTime - localTime + latencyCorrection;
+
+        useLocalTime = false; // Reset to ensure NTP time is used
+        errorMessage.style.display = "none"; // Hide error message
+      } catch (error) {
+        console.error("Failed to synchronize with server time:", error);
+
+        // Switch to local time
+        useLocalTime = true;
+        errorMessage.textContent =
+          "Failed to synchronize with NTP server. Using device time instead.";
+        errorMessage.style.display = "block";
+      }
+    }
 
     function updateDisplay() {
-      const now = new Date(startTime + offset + (Date.now() - startTime));
+      const now = useLocalTime
+        ? new Date(Date.now() + offset) // Use local device time
+        : new Date(Date.now() + serverTimeOffset + offset); // Use server-synchronized time
+
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
       const seconds = String(now.getSeconds()).padStart(2, '0');
       const milliseconds = now.getMilliseconds();
-      
+
       timeDisplay.textContent = `${hours}:${minutes}:${seconds}.${String(milliseconds).padStart(3, '0')}`;
-      
+
+      // Flash background when milliseconds fall within specified range
       if ((milliseconds > 887 && milliseconds < 960) && flashToggle.checked) {
         document.body.style.backgroundColor = "blue";
       } else {
@@ -96,7 +146,7 @@
     function adjustTime(direction) {
       const inputField = document.getElementById('timeAdjust');
       const value = parseInt(inputField.value, 10);
-      
+
       if (!isNaN(value)) {
         if (direction === 'forward') {
           offset += value;
@@ -108,7 +158,10 @@
       }
     }
 
-    setInterval(updateDisplay, 3);
+    // Synchronize with server time and start interval
+    synchronizeWithServer().then(() => {
+      setInterval(updateDisplay, 3);
+    });
   </script>
 </body>
 
