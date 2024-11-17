@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
-
+  
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>former clock</title>
+  <title>JST Clock msec</title>
   <style>
     body {
       font-family: "Times New Roman", serif;
@@ -79,30 +79,30 @@
 
   <script>
     let offset = 0;
-    let serverTimeOffset = 0; // Server and local time difference in ms
-    let latencyCorrection = 0; // Latency correction value
+    let serverTimeOffset = 0;
+    let latencyCorrection = 0;
     const timeDisplay = document.getElementById('timeDisplay');
     const offsetDisplay = document.getElementById('offset');
     const flashToggle = document.getElementById('flashToggle');
 
-    // Function to synchronize with server time
     async function synchronizeWithServer() {
       try {
-        const start = Date.now();
-        const response = await fetch("https://worldtimeapi.org/api/timezone/Asia/Tokyo"); // Example API
+        const start = performance.now();
+        const response = await fetch("https://worldtimeapi.org/api/timezone/Asia/Tokyo");
         const data = await response.json();
-        const end = Date.now();
+        const end = performance.now();
 
-        // Calculate round-trip latency
         const roundTripLatency = end - start;
-        latencyCorrection = roundTripLatency / 2; // Half of the round-trip latency
-        console.log(`Round-trip latency: ${roundTripLatency} ms, Correction applied: ${latencyCorrection} ms`);
+        latencyCorrection = roundTripLatency / 2;
 
         const serverTime = new Date(data.utc_datetime).getTime();
         const localTime = Date.now();
+
         serverTimeOffset = serverTime - localTime + latencyCorrection;
+
       } catch (error) {
         console.error("Failed to synchronize with server time:", error);
+        serverTimeOffset = 0;
       }
     }
 
@@ -115,7 +115,6 @@
 
       timeDisplay.textContent = `${hours}:${minutes}:${seconds}.${String(milliseconds).padStart(3, '0')}`;
 
-      // Flash background when milliseconds fall within specified range
       if ((milliseconds > 887 && milliseconds < 960) && flashToggle.checked) {
         document.body.style.backgroundColor = "blue";
       } else {
@@ -138,11 +137,10 @@
       }
     }
 
-    // Synchronize with server time and start interval
     synchronizeWithServer().then(() => {
       setInterval(updateDisplay, 3);
     });
   </script>
 </body>
-
+  
 </html>
