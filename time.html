@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Accurate Time Display</title>
+  <title>JST Clock msec</title>
   <style>
     body {
       font-family: "Times New Roman", serif;
@@ -79,13 +78,12 @@
 
   <script>
     let offset = 0;
-    let serverTimeOffset = 0; // Difference between server and local time in ms
-    let latencyCorrection = 0; // Latency correction value
+    let serverTimeOffset = 0;
+    let latencyCorrection = 0;
     const timeDisplay = document.getElementById('timeDisplay');
     const offsetDisplay = document.getElementById('offset');
     const flashToggle = document.getElementById('flashToggle');
 
-    // Function to synchronize with NTP server
     async function synchronizeWithServer() {
       try {
         const start = performance.now();
@@ -93,24 +91,21 @@
         const data = await response.json();
         const end = performance.now();
 
-        // Measure round-trip latency
         const roundTripLatency = end - start;
-        latencyCorrection = roundTripLatency / 2; // Half of round-trip latency
+        latencyCorrection = roundTripLatency / 2;
 
         const serverTime = new Date(data.utc_datetime).getTime();
         const localTime = Date.now();
 
-        // Calculate server time offset and apply latency correction
         serverTimeOffset = serverTime - localTime + latencyCorrection;
 
       } catch (error) {
         console.error("Failed to synchronize with server time:", error);
-        serverTimeOffset = 0; // Default to no offset if synchronization fails
+        serverTimeOffset = 0;
       }
     }
 
     function updateDisplay() {
-      // Get the current time adjusted with server offset and user-defined offset
       const now = new Date(Date.now() + serverTimeOffset + offset);
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
@@ -119,7 +114,6 @@
 
       timeDisplay.textContent = `${hours}:${minutes}:${seconds}.${String(milliseconds).padStart(3, '0')}`;
 
-      // Flash background when milliseconds fall within specified range
       if ((milliseconds > 887 && milliseconds < 960) && flashToggle.checked) {
         document.body.style.backgroundColor = "blue";
       } else {
@@ -142,11 +136,9 @@
       }
     }
 
-    // Synchronize with server and start updating display
     synchronizeWithServer().then(() => {
       setInterval(updateDisplay, 3);
     });
   </script>
 </body>
-
 </html>
